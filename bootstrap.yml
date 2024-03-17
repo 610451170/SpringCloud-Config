@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: esun-budget-trace
+  cloud:
+    nacos: #nacos配置
+      discovery:
+        #        server-addr: 10.124.0.111:8848
+        server-addr: 127.0.0.1:8848
+        metadata:
+          gRPC_port: ${grpc.server.port} #将该服务的gRpc端口写入注册中心，供其他服务发现
+
+grpc:
+  server:
+    port: 9094 #grpc端口
+  client:
+    esun-multi-language: #配置多语言Grpc服务
+      enable-keep-alive: true #允许长连接
+      address: discovery:///esun-multi-language #通过服务名调用grpc
+      negotiationType: PLAINTEXT
+    esun-platform: #配置多语言Grpc服务
+      enable-keep-alive: true #允许长连接
+      address: discovery:///esun-platform #通过服务名调用grpc
+      negotiationType: PLAINTEXT
+

@@ -1,0 +1,132 @@
+#jetcache配置
+jetcache:
+  areaInCacheName: false
+  statIntervalMinutes: 10
+  local:
+    default:
+      keyConvertor: fastjson
+      type: linkedhashmap
+      limit: 500
+  remote:
+    default:
+      type: redis
+      host: 10.124.0.116
+      database: 2
+      port: 6379
+      password: qadesun
+      #全局key前缀
+      keyPrefix: 'esun-budget-trace:'
+      keyConvertor: fastjson
+      valueEncoder: java
+      valueDecoder: java
+      poolConfig:
+        minIdle: 5
+        maxIdle: 20
+        maxTotal: 100
+
+mybatis: #mybatis配置
+  mapper-locations: classpath*:/mapper/*.xml
+  type-aliases-package: com.esun.dao.eo
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+server:
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain
+    min-response-size: 2048
+  port: 9014 #服务启动地址
+
+wxhg:
+  # DBCP2数据源配置
+  datasource:
+#    url: jdbc:datadirect:openedge://192.168.0.20:32992;databaseName=extension;codePage=UTF-8 ## 客户测试环境
+    url: jdbc:datadirect:openedge://10.123.0.89:32992;databaseName=extension;codePage=UTF-8
+    driver-class-name: com.ddtek.jdbc.openedge.OpenEdgeDriver
+    username: mfg
+    password: ''
+    type: org.apache.commons.dbcp2.BasicDataSource
+    # DBCP2连接池配置
+    max-wait-millis: 60000
+    min-idle: 10
+    max-idle: 10
+    max-total: 100
+    initial-size: 5
+    pool-prepared-statements: true
+    default-auto-commit: true
+
+spring:
+  datasource:
+    druid: # druid连接池配置
+      default: #多数据源配置,如果需要添加数据源，则需要修改com.esun.server.datasource.DynamicDataSourceConfig配置
+        driver-class-name: org.postgresql.Driver
+        url: jdbc:postgresql://10.124.0.116:5432/budget_trace?useUnicode=true&characterEncoding=utf-8&useSSL=true
+        username: postgres
+        password: qadesun
+        filters: stat,wall,log4j
+        initialSize: 20 #初始连接池大写
+        maxActive: 100 #最大连接数
+        maxPoolPreparedStatementPerConnectionSize: 20
+        maxWait: 60000 #最大等待时间
+        minIdle: 10
+        filter:
+          wall:
+            config:
+              start-transaction-allow:
+    type: com.alibaba.druid.pool.DruidDataSource
+  jackson: #设置JSON时区
+    time-zone: Asia/Shanghai
+    date-format: yyyy-MM-dd HH:mm:ss
+  main:
+    allow-bean-definition-overriding: true
+  redis: #redis配置，sso登录信息缓存数据存储
+    database: 2
+    host: 10.124.0.116
+    password: qadesun
+    port: 6379
+    timeout: 5000
+  rabbitmq: #rabbitmq配置
+    host: 10.124.0.116
+    port: 5672
+    username: admin
+    password: adminadmin
+  #文件上传配置
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 20MB
+      max-request-size: 1000MB
+
+esun:
+  sso:
+    enable: true
+  log:
+    database:
+      enable: false  #数据库日志收集开关,默认关闭。通过代理实现，依赖rabbitmq消息队列，确保与日志服务使用同一消息队列地址
+    operation:
+      enable: false #操作日志收集开关，默认关闭，通过代理实现，依赖rabbitmq消息队列，确保与日志服务使用同一消息队列地址
+  aop:
+    enable: true #请求数据拦截及自动写入创建信息及修改开关,默认开启。
+    formatChcek:
+      enable: false #数据格式校验开关，默认关闭。切面代理@FormatCheck注解
+    whiteList:
+      - /*
+  time:
+    enable: false
+
+
+#mybatis debug日志输出
+logging:
+  level:
+    com.esun: debug
+
+#设置feign客户端超时时间(OpenFeign默认支持ribbon)
+ribbon:
+  # 请求处理的超时时间
+  ReadTimeout: 60000
+  # 请求连接的超时时间
+  ConnectTimeout: 60000
