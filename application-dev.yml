@@ -39,7 +39,7 @@ server:
     enabled: true
     mime-types: application/json,application/xml,text/html,text/xml,text/plain
     min-response-size: 2048
-  port: 9014 #服务启动地址
+  port: 9015 #服务启动地址
 
 wxhg:
   # DBCP2数据源配置
